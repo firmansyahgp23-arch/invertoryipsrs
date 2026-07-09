@@ -49,7 +49,7 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
         .btn-tambah {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #10b981; /* Hijau Emerald */
+            background-color: #10b981; 
             color: white;
             text-decoration: none;
             border-radius: 6px;
@@ -111,7 +111,7 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
             transition: all 0.2s;
         }
         .actions .edit {
-            color: #3b82f6; /* Biru */
+            color: #3b82f6; 
             background-color: #eff6ff;
             margin-right: 5px;
         }
@@ -119,11 +119,24 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
             background-color: #dbeafe;
         }
         .actions .delete {
-            color: #ef4444; /* Merah */
+            color: #ef4444; 
             background-color: #fef2f2;
         }
         .actions .delete:hover {
             background-color: #fee2e2;
+        }
+
+        /* Footer Style untuk Nama Anda */
+        .main-footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #edf2f7;
+            text-align: center;
+            font-size: 13px;
+            color: #a0aec0;
+        }
+        .main-footer strong {
+            color: #4a5568;
         }
     </style>
 </head>
@@ -164,6 +177,10 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
                 ?>
             </tbody>
         </table>
+    </div>
+
+    <div class="main-footer">
+        Aplikasi dikembangkan oleh: <strong>FIRMANSYAH GITA PRADANA</strong>
     </div>
 </div>
 
