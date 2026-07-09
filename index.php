@@ -1,6 +1,22 @@
 <?php
 include_once("config.php");
-$result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
+
+// 1. Cek apakah ada kata kunci yang diketik di kolom pencarian
+$keyword = "";
+if (isset($_GET['search'])) {
+    $keyword = mysqli_real_escape_string($mysqli, $_GET['search']);
+    // Query jika user melakukan pencarian (mencari berdasarkan nama alat ATAU merek ATAU lokasi)
+    $query = "SELECT * FROM alat WHERE 
+              nama_alat LIKE '%$keyword%' OR 
+              merek LIKE '%$keyword%' OR 
+              lokasi LIKE '%$keyword%' 
+              ORDER BY id DESC";
+} else {
+    // Query default jika tidak ada pencarian
+    $query = "SELECT * FROM alat ORDER BY id DESC";
+}
+
+$result = mysqli_query($mysqli, $query);
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +61,16 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
             font-weight: 600;
         }
 
+        /* Top Bar Actions (Tombol + Search Form) */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
         /* Action Button */
         .btn-tambah {
             display: inline-block;
@@ -55,12 +81,55 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
             border-radius: 6px;
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 20px;
             transition: all 0.2s ease;
         }
         .btn-tambah:hover {
             background-color: #059669;
             transform: translateY(-1px);
+        }
+
+        /* Search Form Style */
+        .search-form {
+            display: flex;
+            gap: 8px;
+        }
+        .search-input {
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 250px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus {
+            border-color: #3b82f6;
+        }
+        .btn-search {
+            padding: 10px 20px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-search:hover {
+            background-color: #2563eb;
+        }
+        .btn-reset {
+            padding: 10px 15px;
+            background-color: #64748b;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .btn-reset:hover {
+            background-color: #475569;
         }
 
         /* Table Design */
@@ -126,7 +195,7 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
             background-color: #fee2e2;
         }
 
-        /* Footer Style untuk Nama Anda */
+        /* Footer Style */
         .main-footer {
             margin-top: 30px;
             padding-top: 15px;
@@ -147,7 +216,17 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
         <h2>Sistem Informasi Manajemen RS - Data Alat</h2>
     </div>
 
-    <a href="add.php" class="btn-tambah">+ Tambah Alat Baru</a>
+    <div class="top-bar">
+        <a href="add.php" class="btn-tambah">+ Tambah Alat Baru</a>
+        
+        <form action="index.php" method="GET" class="search-form">
+            <input type="text" name="search" class="search-input" placeholder="Cari nama alat, merek, atau lokasi..." value="<?php echo htmlspecialchars($keyword); ?>">
+            <button type="submit" class="btn-search">Cari</button>
+            <?php if ($keyword != ""): ?>
+                <a href="index.php" class="btn-reset">Reset</a>
+            <?php endif; ?>
+        </form>
+    </div>
 
     <div class="table-responsive">
         <table>
@@ -162,17 +241,21 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
             </thead>
             <tbody>
                 <?php
-                while($user_data = mysqli_fetch_array($result)) {
-                    echo "<tr>";
-                    echo "<td><strong>".$user_data['nama_alat']."</strong></td>";
-                    echo "<td>".$user_data['tahun']."</td>";
-                    echo "<td>".$user_data['merek']."</td>";
-                    echo "<td>".$user_data['lokasi']."</td>";
-                    echo "<td class='actions' style='text-align: center;'>
-                            <a href='edit.php?id=$user_data[id]' class='edit'>Edit</a>
-                            <a href='delete.php?id=$user_data[id]' class='delete' onclick='return confirm(\"Yakin ingin menghapus data ini?\")'>Delete</a>
-                          </td>";
-                    echo "</tr>";
+                if (mysqli_num_rows($result) > 0) {
+                    while($user_data = mysqli_fetch_array($result)) {
+                        echo "<tr>";
+                        echo "<td><strong>".$user_data['nama_alat']."</strong></td>";
+                        echo "<td>".$user_data['tahun']."</td>";
+                        echo "<td>".$user_data['merek']."</td>";
+                        echo "<td>".$user_data['lokasi']."</td>";
+                        echo "<td class='actions' style='text-align: center;'>
+                                <a href='edit.php?id=$user_data[id]' class='edit'>Edit</a>
+                                <a href='delete.php?id=$user_data[id]' class='delete' onclick='return confirm(\"Yakin ingin menghapus data ini?\")'>Delete</a>
+                              </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5' style='text-align: center; color: #a0aec0; padding: 30px;'>Data tidak ditemukan atau belum ada.</td></tr>";
                 }
                 ?>
             </tbody>
