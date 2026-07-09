@@ -263,7 +263,7 @@ $result = mysqli_query($mysqli, $query);
     </div>
 
     <div class="main-footer">
-        Aplikasi dikembangkan oleh: <strong>FIRMANSYAH GITA PRADANA</strong>
+        Aplikasi dikembangkan oleh: <strong>FIRMANSYAH GITA PRADANA__2202505035</strong>
     </div>
 </div>
 
